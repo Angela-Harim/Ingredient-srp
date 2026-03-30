@@ -10,7 +10,7 @@ public class StockMovement {
     private MovementTypeEnum type;
     private Instant creationDatetime;
 
-    public StockMovement(Integer id, StockValue value, MovementTypeEnum type, Instant creationDatetime) {
+    public StockMovement() {
         this.id = id;
         this.value = value;
         this.type = type;
