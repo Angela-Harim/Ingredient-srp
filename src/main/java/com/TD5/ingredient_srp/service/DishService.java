@@ -21,16 +21,6 @@ public class DishService {
         this.ingredientRepository = ingredientRepository;
     }
 
-    public List<Dish> getAllDishes() {
-        List<Dish> dishes = dishRepository.findAll();
-
-        for (Dish dish : dishes) {
-            List<DishIngredient> ingredients = ingredientRepository.findByDishId(dish.getId());
-            dish.setDishIngredients(ingredients);
-        }
-
-        return dishes;
-    }
 
     public void updateDishIngredients(int dishId, List<Ingredient> ingredients) {
 
@@ -48,5 +38,15 @@ public class DishService {
             ingredientRepository.findById(ingredient.getId())
                     .ifPresent(i -> dishRepository.addIngredientToDish(dishId, i.getId()));
         }
+    }
+
+    public List<Ingredient> getIngredientsByDishWithFilters(int dishId, String name, Double price) {
+
+        if (dishRepository.findById(dishId) == null) {
+            throw new DishNotFoundException("Dish.id=" + dishId + " is not found");
+        }
+
+
+        return dishRepository.findIngredientsByDishWithFilters(dishId, name, price);
     }
 }

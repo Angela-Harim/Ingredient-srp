@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping("/dishes")
 public class DishController {
     private final DishRepository repository;
-    private final DishService dishService ;
+    private final DishService dishService;
 
     public DishController(DishRepository repository, DishService dishService) {
         this.repository = repository;
@@ -27,26 +27,13 @@ public class DishController {
         return repository.findAll();
     }
 
-    @PutMapping("/{id}/ingredients")
-    public ResponseEntity<?> updateIngredients(
+    @GetMapping("/{id}/ingredients")
+    public List<Ingredient> getDishIngredients(
             @PathVariable int id,
-            @RequestBody(required = false) List<Ingredient> ingredients) {
+            @RequestParam(required = false) String ingredientName,
+            @RequestParam(required = false) Double ingredientPriceAround) {
 
-        if (ingredients == null) {
-            return ResponseEntity.badRequest()
-                    .body("Request body is required");
-        }
-
-        if (ingredients.isEmpty()) {
-            return ResponseEntity.badRequest()
-                    .body("Ingredient list must not be empty");
-        }
-
-        try {
-            dishService.updateDishIngredients(id, ingredients);
-            return ResponseEntity.ok().build();
-        } catch (DishNotFoundException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        }
+        return dishService.getIngredientsByDishWithFilters(id, ingredientName, ingredientPriceAround);
     }
+
 }
