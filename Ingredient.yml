@@ -1,0 +1,165 @@
+openapi: 3.0.3
+info:
+  title: TD OpenAPI Specification - Exercise 1
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080'
+paths:
+
+  #GET /ingredients
+  /ingredients:
+    get:
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ingredient'
+
+  #GET /ingredients/{id}
+  /ingredients/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ingredient'
+        404:
+          description: Not Found
+
+ #GET /ingredients/{id}/stock?at={temporal}&unit={unit}
+  /ingredients/{id}/stock:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: at
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: unit
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Unit'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockValue'
+
+  # GET /dishes
+  /dishes:
+    get:
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DishRest'
+
+  #PUT /dishes/{id}/ingredients,
+  /dishes/{id}/ingredients:
+    put:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/IngredientUpdate'
+      responses:
+        200:
+          description: OK
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+
+components:
+  schemas:
+    Ingredient:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        price:
+          type: number
+        category:
+          type: string
+
+    Unit:
+      type: string
+      enum: [KG, UNIT]
+
+    StockValue:
+      type: object
+      properties:
+        value:
+          type: number
+        unit:
+          $ref: '#/components/schemas/Unit'
+
+    DishRest:
+      type: object
+      properties:
+        id:
+          type: integer
+        price:
+          type: number
+        name:
+          type: string
+        ingredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/DishIngredientRest'
+
+    DishIngredientRest:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+        price:
+          type: number
+
+    IngredientUpdate:
+      type: object
+      properties:
+        id_ingredient:
+          type: integer
+        quantity:
+          type: number
